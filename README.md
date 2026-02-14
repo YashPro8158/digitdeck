@@ -21,4 +21,4 @@ Digit Deck lets you store numbers, prevent duplicates, sort them, search through
 ## 🚀 Getting Started
 1. Clone the repo  
    ```bash
-   git clone https://github.com/<your-username>/digit-deck.git
+   git clone https://github.com/YashPro8158/digitdeck.git
