@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Store Numbers Pro</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: radial-gradient(1200px 600px at 10% -10%, #1f2933, transparent),
+                linear-gradient(135deg, #0b1220, #020617);
+            display: grid;
+            place-items: center;
+            color: #e5e7eb;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 900px;
+            background: #020617;
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, .45);
+            display: grid;
+            grid-template-columns: 1.2fr .8fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 860px) {
+            .app {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: #020617;
+            border: 1px solid #0f172a;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: inset 0 0 0 1px rgba(148, 163, 184, .05);
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .title h2 {
+            margin: 0;
+            letter-spacing: .4px;
+        }
+
+        #errormsg {
+            min-height: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 8px;
+        }
+
+        .row+.row {
+            margin-top: 8px;
+        }
+
+        input {
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid #1e293b;
+            outline: none;
+            background: #020617;
+            color: #e5e7eb;
+            font-size: 15px;
+        }
+
+        input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, .2);
+        }
+
+        button {
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            letter-spacing: .2px;
+            transition: transform .08s ease, filter .08s ease;
+        }
+
+        button:active {
+            transform: translateY(1px);
+            filter: brightness(.95);
+        }
+
+        .primary {
+            background: linear-gradient(135deg, #38bdf8, #22d3ee);
+            color: #020617;
+        }
+
+        .secondary {
+            background: #0f172a;
+            color: #e5e7eb;
+            border: 1px solid #1e293b;
+        }
+
+        .danger {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .actions .wide {
+            grid-column: span 2;
+        }
+
+        .list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0;
+            max-height: 260px;
+            overflow-y: auto;
+            border: 1px dashed #1e293b;
+            border-radius: 12px;
+        }
+
+        .list li {
+            padding: 10px 12px;
+            border-bottom: 1px solid #0f172a;
+            cursor: pointer;
+            transition: background .12s ease, transform .06s ease;
+        }
+
+        .list li:hover {
+            background: #0b1220;
+            transform: translateX(2px);
+        }
+
+        .list li:last-child {
+            border-bottom: none;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .stat {
+            background: linear-gradient(180deg, #020617, #020617);
+            border: 1px solid #0f172a;
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .stat .k {
+            font-size: 12px;
+            opacity: .7;
+        }
+
+        .stat .v {
+            font-size: 22px;
+            font-weight: 800;
+            margin-top: 4px;
+        }
+
+        .hint {
+            font-size: 12px;
+            opacity: .65;
+            text-align: center;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+        
+        <h2>📦 Number Manager</h2>
+        <p style="opacity:.6; text-align:center; margin-top:-6px;">
+            Manage, sort, search & export numbers
+        </p>
+        <!-- Left: Input + List -->
+        <div class="card">
+            <div class="title">
+                <h2>📦 Store Numbers Pro</h2>
+                <span style="opacity:.6;font-size:12px;">Vanilla JS</span>
+            </div>
+
+            <p id="errormsg"></p>
+
+            <div class="row">
+                <input type="number" id="number" placeholder="Enter a number..." />
+                <button id="submit" class="primary">Add</button>
+                <button id="undo" class="secondary">Undo</button>
+                <button id="statsbtn" class="secondary" onclick="updateStats()">Stats</button>
+            </div>
+
+            <div class="row">
+                <input type="search" id="search" placeholder="Search in list..." />
+                <span></span><span></span><span></span>
+            </div>
+
+            <div class="actions">
+                <button id="sortlist" class="secondary">Sort ↑</button>
+                <button id="sortlistdesc" class="secondary">Sort ↓</button>
+                <button id="clearlist" class="danger wide">Clear All</button>
+                <button id="exportlist" class="primary wide" onclick="exportList()">Export</button>
+            </div>
+
+            <ul id="listofinputs" class="list"></ul>
+            <div class="hint">Click a number to delete · Enter to add · Ctrl+Enter works too</div>
+        </div>
+
+        <!-- Right: Stats -->
+        <div class="card">
+            <div class="title">
+                <h2>📊 Live Stats</h2>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="k">Count</div>
+                    <div class="v" id="count">0</div>
+                </div>
+                <div class="stat">
+                    <div class="k">Min</div>
+                    <div class="v" id="min">0</div>
+                </div>
+                <div class="stat">
+                    <div class="k">Max</div>
+                    <div class="v" id="max">0</div>
+                </div>
+                <div class="stat">
+                    <div class="k">Sum</div>
+                    <div class="v" id="sum">0</div>
+                </div>
+                <div class="stat" style="grid-column: span 2;">
+                    <div class="k">Average</div>
+                    <div class="v" id="avg">0.00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let lastDeleted = null;
+        const numberinput = document.getElementById("number");
+        const displaylist = document.getElementById("listofinputs");
+        let arrayinputs = [];
+        let li;
+
+        function error(msg, color) {
+            const el = document.getElementById("errormsg");
+            el.style.color = color;
+            el.innerText = msg;
+        }
+
+        document.getElementById("submit").addEventListener("click", () => {
+            if (numberinput.value === "" || numberinput.value === null || numberinput.value < 0) {
+                error("Pls enter correct value pls", "red"); return;
+            }
+            if (arrayinputs.some(n => n === numberinput.value)) {
+                error("Same number, pls try different number", "red"); return;
+            }
+            li = document.createElement("li");
+            li.innerText = numberinput.value;
+            displaylist.appendChild(li);
+            arrayinputs.push(numberinput.value);
+            numberinput.value = "";
+            error("Added ✔", "lightgreen");
+            updateStats();
+        });
+
+        displaylist.addEventListener("click", (e) => {
+            if (e.target.tagName === "LI") {
+                lastDeleted = e.target.innerText;
+                const value = e.target.innerText;
+                arrayinputs = arrayinputs.filter(item => item !== value);
+                e.target.remove();
+                error("Deleted · You can Undo", "orange");
+                updateStats();
+            }
+        });
+
+        document.getElementById("undo").addEventListener("click", () => {
+            if (lastDeleted !== null) {
+                arrayinputs.push(lastDeleted);
+                const li = document.createElement("li");
+                li.innerText = lastDeleted;
+                displaylist.appendChild(li);
+                lastDeleted = null;
+                error("Undo successful", "lightgreen");
+                updateStats();
+            }
+        });
+
+        document.getElementById("clearlist").addEventListener("click", () => {
+            displaylist.innerHTML = "";
+            arrayinputs.length = 0;
+            error("All List Deleted !", "lightgreen");
+            updateStats();
+        });
+
+        document.getElementById("sortlist").addEventListener("click", () => {
+            arrayinputs.sort((a, b) => a - b);
+            renderList();
+            error("Sorted ↑", "lightgreen");
+        });
+
+        document.getElementById("sortlistdesc").addEventListener("click", () => {
+            arrayinputs.sort((a, b) => b - a);
+            renderList();
+            error("Sorted ↓", "lightgreen");
+        });
+
+        numberinput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") document.getElementById("submit").click();
+        });
+
+        document.getElementById("search").addEventListener("input", () => {
+            const q = document.getElementById("search").value;
+            const items = displaylist.querySelectorAll("li");
+            items.forEach(li => {
+                li.style.display = li.innerText.includes(q) ? "block" : "none";
+            });
+        });
+
+        function renderList() {
+            displaylist.innerHTML = "";
+            arrayinputs.forEach(item => {
+                const li = document.createElement("li");
+                li.innerText = item;
+                displaylist.appendChild(li);
+            });
+        }
+
+        function updateStats() {
+            const nums = arrayinputs.map(Number);
+            document.getElementById("count").innerText = nums.length;
+            document.getElementById("min").innerText = nums.length ? Math.min(...nums) : 0;
+            document.getElementById("max").innerText = nums.length ? Math.max(...nums) : 0;
+            const sum = nums.reduce((a, b) => a + b, 0);
+            document.getElementById("sum").innerText = sum;
+            document.getElementById("avg").innerText = (nums.length ? (sum / nums.length) : 0).toFixed(2);
+        }
+
+        function exportList() {
+            const blob = new Blob([arrayinputs.join(", ")], { type: "text/plain" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "numbers.txt";
+            link.click();
+        }
+    </script>
+</body>
+
+</html>
