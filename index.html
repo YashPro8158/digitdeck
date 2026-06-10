@@ -278,7 +278,7 @@
 
         document.getElementById("submit").addEventListener("click", () => {
             if (numberinput.value === "" || numberinput.value === null || numberinput.value < 0) {
-                error("Pls enter correct value pls", "red"); return;
+                error("Enter correct value pls", "red"); return;
             }
             if (arrayinputs.some(n => n === numberinput.value)) {
                 error("Same number, pls try different number", "red"); return;
